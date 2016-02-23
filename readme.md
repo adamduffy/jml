@@ -140,24 +140,23 @@ var myComponent = {
 
 ###Reading input data
 
-to keep the abstraction away from html, the best way to read user input is by mapping it back to your javascript data objects.  you can do this with the onchange or other similar element events.
+to keep the abstraction away from html, the best way to read user input is by mapping it back to your javascript data objects.  you can do this with the onchange or other similar element events.  another option is to give the element a unique id and find it later.  both are demonstrated here:
 
 ```javascript
 function myInputForm(data) {
 	var c = {
+		lastNameId: Math.random(),
 		setFirstName(value) {
 			data.firstName = value;
 		},
-		setLastName(value) {
-			data.lastName = value;
-		},
 		submit() {
+			data.lastName = document.getElementById(c.lastNameId).value;
 			alert(data.firstName + " " + data.lastName);
 		},
 		getBody() {
 			return [
 				{input: {_type: "text", _value: data.firstName, _onchange: [c.setFirstName, "this.value"]}},
-				{input: {_type: "text", _value: data.lastName, _onchange: [c.setLastName, "this.value"]}},
+				{input: {_type: "text", _value: data.lastName, _id: c.lastNameId}},
 				{button: [{_onclick: c.submit}, 'submit']}
 			];
 		}
@@ -166,7 +165,7 @@ function myInputForm(data) {
 }
 ```
 ```html
-<component id="0"><input type="text" onchange="jml.functions[0](this.value)"><input type="text" onchange="jml.functions[1](this.value)"><button onclick="jml.functions[2]()">submit</button></component>
+<component id="0"><input type="text" onchange="jml.functions[0](this.value)"><input type="text" id="0.9809886058792472"><button onclick="jml.functions[1]()">submit</button></component>
 ```
 
 ##Putting it all together
