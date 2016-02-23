@@ -138,6 +138,37 @@ var myComponent = {
 <component id="0"><span>this is a resolved promise</span></component>
 ```
 
+###Reading input data
+
+to keep the abstraction away from html, the best way to read user input is by mapping it back to your javascript data objects.  you can do this with the onchange or other similar element events.
+
+```javascript
+function myInputForm(data) {
+	var c = {
+		setFirstName(value) {
+			data.firstName = value;
+		},
+		setLastName(value) {
+			data.lastName = value;
+		},
+		submit() {
+			alert(data.firstName + " " + data.lastName);
+		},
+		getBody() {
+			return [
+				{input: {_type: "text", _value: data.firstName, _onchange: [c.setFirstName, "this.value"]}},
+				{input: {_type: "text", _value: data.lastName, _onchange: [c.setLastName, "this.value"]}},
+				{button: [{_onclick: c.submit}, 'submit']}
+			];
+		}
+	};
+	return c;
+}
+```
+```html
+<component id="0"><input type="text" onchange="jml.functions[0](this.value)"><input type="text" onchange="jml.functions[1](this.value)"><button onclick="jml.functions[2]()">submit</button></component>
+```
+
 ##Putting it all together
 
 That is the extent of the JML library itself.  This leaves a lot of room for project architecture around it.  Here is a basic example of how to begin:
@@ -149,7 +180,7 @@ start with a simple html file:
 <head>
 	<script type="text/javascript" src="jml.js"></script>
 	<script type="text/javascript" src="readme.js"></script>
-	<title>Readme example</title>
+	<title>JML example</title>
 </head>
 	<body onload="bodyOnLoad()">
 	</body>
@@ -164,10 +195,7 @@ function bodyOnLoad() {
 
 var myComponent = {
 	getBody() {
-		return Promise.resolve({span: 'this is a resolved promise'});
-	},
-	getLoadingBody() {
-		return {span: 'loading'};
+		return {span: 'my first JML app'});
 	}
 }
 ```
