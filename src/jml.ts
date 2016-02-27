@@ -21,7 +21,7 @@ export function reset(): void {
 }
 
 export function goto(hash: string): void {
-  window.location.hash = hash || "";
+  window.location.hash = hash || '';
 }
 
 export function renderPage(o: any): void {
@@ -33,10 +33,10 @@ export function renderPage(o: any): void {
 
 export function render(o: any): string {
   if (o === undefined) {
-    return "[undefined]";
-  } else if (o instanceof String || typeof o === "string") {
+    return '[undefined]';
+  } else if (o instanceof String || typeof o === 'string') {
     return o;
-  } else if (o instanceof Number || typeof o === "number") {
+  } else if (o instanceof Number || typeof o === 'number') {
     return o.toString();
   } else if (o instanceof Array) {
     return renderArray(o);
@@ -50,7 +50,7 @@ export function render(o: any): string {
 export function applyEvents(startIndex: number = 0) {
   const w = window as any;
   for (let i = startIndex; i < eventMap.length; i++) {
-    const elem = w.document.querySelector('[data-jmlevent=\"' + i + '\"]');
+    const elem = w.document.querySelector('[data-jmlevent="' + i + '"]');
     if (!elem) {
       continue;
     }
@@ -96,7 +96,7 @@ export function applyStyles() {
 }
 
 function styleToStyleSheet(styles: any) {
-  let css = "";
+  let css = '';
   for (let id in styles) {
     const ids = styles[id];
     let repeatWithState = false;
@@ -156,7 +156,7 @@ export function rerender(c: Component, body?: any): number {
 }
 
 function renderArray(a: Array<any>): string {
-  let html = "";
+  let html = '';
   a.forEach(o => html += render(o));
   return html;
 }
@@ -178,9 +178,9 @@ function renderComponent(c: Component, body?: any): string {
     );
     body = c.getLoadingBody();
   }
-  let html = "<component id='" + c.id  + "'>";
+  let html = '<component id="' + c.id + '">';
   html += render(body);
-  html += "</component>";
+  html += '</component>';
   c.dirty = (c.html === undefined) ? false : c.html !== html;
   c.html = html;
   // if (c.watch) {
@@ -212,15 +212,15 @@ function renderComponent(c: Component, body?: any): string {
 // }
 
 function renderObject(o: any): string {
-  let html = "";
+  let html = '';
   for (let p in o) {
     if (isAttribute(p) || isEvent(p)) {
       continue; // attribute and events should already be applied
     }
     let classProp: Array<string>, name: string, pos: number;
-    if ((pos = p.indexOf("$")) > 0) {
+    if ((pos = p.indexOf('$')) > 0) {
       name = p.substring(0, pos);
-      classProp = p.substring(pos + 1).split("$");
+      classProp = p.substring(pos + 1).split('$');
     } else {
       name = p;
       classProp = [];
@@ -229,20 +229,20 @@ function renderObject(o: any): string {
     html += renderElementOpen(name, o[p], classProp, !children);
     if (children) {
       html += render(o[p]);
-      html += "</" + name + ">";
+      html += '</' + name + '>';
     }
   }
   return html;
 }
 
 function renderElementOpen(name: string, o: any, classProp: Array<string>, close: boolean): string {
-  return "<" + name +
+  return '<' + name +
     renderProps(o, classProp) + (
-    close ? " />" : ">");
+    close ? ' />' : '>');
 }
 
 function renderProps(o: any, classProp: Array<string>): string {
-  let props = "";
+  let props = '';
   const events = {};
   if (o instanceof Array) {
     o.forEach((p: any) => props += renderPropsFromObject(p, classProp, events));
@@ -250,7 +250,7 @@ function renderProps(o: any, classProp: Array<string>): string {
     props = renderPropsFromObject(o, classProp, events);
   }
   if (usableClassProp(classProp)) {
-    props = " class='" + classProp.join(" ") + "'" + props;
+    props = ' class="' + classProp.join(' ') + '"' + props;
   }
   if (hasContent(events)) {
     const id = eventMap.push(events) - 1;
@@ -269,32 +269,32 @@ function hasContent(o: any) {
 }
 
 function renderPropsFromObject(o: any, classProp: Array<string>, events: any): string {
-  let props = "";
+  let props = '';
   for (let p in o) {
     if (isAttribute(p)) {
-      props += " ";
+      props += ' ';
       let val = o[p];
       p = p.substring(1);
       if (val instanceof Array && val[0] instanceof Function) {
         let f = addFunction(val[0]);
-        let nameHelp = val[0].name ? "/*" + val[0].name + "*/" : "";
+        let nameHelp = val[0].name ? '/*' + val[0].name + '*/' : '';
         val.shift();
         let argString = val.join(',');
         props += `${p}="jml.functions[${f}]${nameHelp}(${argString})"`;
       } else if (val instanceof Function) {
         let f = addFunction(val);
-        let nameHelp = val.name ? "/*" + val.name + "*/" : "";
-        props += `${p}='jml.functions[${f}]${nameHelp}()`;
-      } else if (p === "class") {
+        let nameHelp = val.name ? '/*' + val.name + '*/' : '';
+        props += `${p}="jml.functions[${f}]${nameHelp}()"`;
+      } else if (p === 'class') {
         if (val instanceof Array) {
           [].push.apply(classProp, val);
-        } else if (val.indexOf(" ") > -1) {
-          [].push.apply(classProp, val.split(" "));
+        } else if (val.indexOf(' ') > -1) {
+          [].push.apply(classProp, val.split(' '));
         } else if (val) {
           classProp.push(val);
         }
       } else {
-        props += p + "='" + (val ? val : "") + "'";
+        props += p + '="' + (val ? val : '') + '"';
       }
     } else if (isEvent(p)) {
       events[p.substring(1)] = o[p];
@@ -325,7 +325,7 @@ function addFunction(f: Function): number {
 }
 
 function isAttribute(o: string): boolean {
-  return o.indexOf("_") === 0;
+  return o.indexOf('_') === 0;
 }
 
 function isEvent(o: string): boolean {
@@ -335,8 +335,8 @@ function isEvent(o: string): boolean {
 function hasChildren(o: any): boolean {
   if (
     o instanceof Array ||
-    (typeof o === "string" || o instanceof String) ||
-    (o instanceof Number || typeof o === "number")
+    (typeof o === 'string' || o instanceof String) ||
+    (o instanceof Number || typeof o === 'number')
   ) {
       return true;
   }
