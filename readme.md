@@ -18,7 +18,7 @@ results when jml.render() is called on the object.
 
 ```javascript
 {div: [
-	{span: 'span 1'}, 
+	{span: 'span 1'},
 	{span: 'span 2'}
 ]}
 ```
@@ -28,7 +28,7 @@ results when jml.render() is called on the object.
 
 ### properties
 
-prefix any key with underscore (_) to specify a property of the owner.
+prefix any key with underscore to specify a property of the owner.
 
 ```javascript
 {span: [{_id: 'mySpanId'}, 'welcome to jml']}
@@ -53,6 +53,7 @@ var data = {name: 'adam'};
 ### functions
 
 JML will automatically map your functions to the html output.
+(note: DOM events are the preferred technique. described later)
 
 ```javascript
 function myFunction() {
@@ -140,32 +141,74 @@ var myComponent = {
 
 ###Reading input data
 
-to keep the abstraction away from html, the best way to read user input is by mapping it back to your javascript data objects.  you can do this with the onchange or other similar element events.  another option is to give the element a unique id and find it later.  both are demonstrated here:
+To keep the abstraction away from html, the best way to read user input is by mapping it back to your javascript data objects.  You can do this with the change or other similar element events.  JML will wire up native dom element events if you begin a property with $. Another option is to give the element a unique id and find it later.  
+
+Both techniques are demonstrated here:
 
 ```javascript
 function myInputForm(data) {
-	var c = {
-		lastNameId: Math.random(),
-		setFirstName(value) {
-			data.firstName = value;
-		},
-		submit() {
-			data.lastName = document.getElementById(c.lastNameId).value;
-			alert(data.firstName + " " + data.lastName);
-		},
-		getBody() {
-			return [
-				{input: {_type: "text", _value: data.firstName, _onchange: [c.setFirstName, "this.value"]}},
-				{input: {_type: "text", _value: data.lastName, _id: c.lastNameId}},
-				{button: [{_onclick: c.submit}, 'submit']}
-			];
-		}
-	};
-	return c;
+  const c = {
+    lastNameId: Math.random(),
+    setFirstName(value) {
+      data.firstName = value;
+    },
+    submit() {
+      data.lastName = document.getElementById(c.lastNameId).value;
+      alert(data.firstName + " " + data.lastName);
+    },
+    getBody() {
+      return [
+        {input: {_type: "text", _value: data.firstName, $change: (e) => c.setFirstName(e.srcElement.value)}},
+        {input: {_type: "text", _value: data.lastName, _id: c.lastNameId}},
+        {button: [{$click: c.submit}, 'submit']}
+      ];
+    }
+  };
+  return c;
 }
 ```
 ```html
-<component id="0"><input type="text" onchange="jml.functions[0](this.value)"><input type="text" id="0.9809886058792472"><button onclick="jml.functions[1]()">submit</button></component>
+<component id="0"><input data-jmlevent="0" type="text" value=""><input type="text" value="" id="0.6726410109549761"><button data-jmlevent="1">submit</button></component>
+```
+
+##Styles
+
+JML also uses javascript to define CSS.  The general format is as follows:
+```javascript
+{
+	id: {
+		class: {
+			property: value,
+			state: {
+				property: value, ...
+			}, ...
+		}, ...
+	}, ...
+}
+```
+JML uses c.id and c.getStyle() to maintain the composite css object. Class names can still be prepended with $ in place of . when desired (other selectors work in place of class name).  Included examples show techniques to define and override default styles.
+```javascript
+var myComponent = {
+	id: 'page',
+	getStyle() {
+    return {
+      $clickable: {
+        cursor: 'pointer',
+        ':hover': {
+					'text-decoration': 'underline'
+        }
+      }
+    };
+  }
+}
+```
+```css
+#page .clickable {
+	cursor:pointer;
+}
+#page .clickable:hover {
+	text-decoration:underline;
+}
 ```
 
 ##Putting it all together
@@ -177,17 +220,20 @@ start with a simple html file:
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="jml.js"></script>
 	<script type="text/javascript" src="readme.js"></script>
 	<title>JML example</title>
 </head>
-	<body onload="bodyOnLoad()">
+	<body>
 	</body>
 </html>
 ```
 
 and a simple js file:
 ```javascript
+import * as jml from './jml';
+
+window.onload = bodyOnLoad();
+
 function bodyOnLoad() {
 	document.body.innerHTML = jml.render(myComponent);
 }
