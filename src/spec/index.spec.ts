@@ -80,4 +80,24 @@ describe('jml', () => {
     expect(clicked).to.equal(true);
   });
 
+  it('applies styles', () => {
+    const testComponent = {
+      id: 'testId',
+      getBody() {
+        return {span$myClass: 'test span'};
+      },
+      getStyle() {
+        return {
+          $myClass: {
+            color: 'red'
+          }
+        };
+      }
+    };
+    jml.renderPage(testComponent);
+    const elem = document.querySelector('#testId .myClass');
+    const style = getComputedStyle(elem);
+    expect(style.color).to.equal('rgb(255, 0, 0)');
+  });
+
 });
