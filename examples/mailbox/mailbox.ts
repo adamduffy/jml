@@ -16,11 +16,8 @@ function hashChanged() {
   const start = performance.now();
   let hash = window.location.hash;
   hash = hash ? hash.substring(1) : '';
-  const body = getPage(hash);
-  jml.reset();
-  window.document.body.innerHTML = jml.render(body);
-  jml.applyStyles('jml-style');
-  jml.applyEvents();
+  const page = getPage(hash);
+  jml.renderPage(page);
   const end = performance.now();
   console.log('page refresh in ' + (end - start) + 'ms');
 }

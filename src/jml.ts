@@ -24,6 +24,13 @@ export function goto(hash: string): void {
   window.location.hash = hash || "";
 }
 
+export function renderPage(o: any): void {
+  reset();
+  document.body.innerHTML = render(o);
+  applyStyles();
+  applyEvents();
+}
+
 export function render(o: any): string {
   if (o === undefined) {
     return "[undefined]";
@@ -69,7 +76,7 @@ export function mergeStyles(dest: any, source: any): void {
   }
 }
 
-export function applyStyles(elementId: string) {
+export function applyStyles() {
   const styles = {};
   components.forEach(c => {
     if (c.getStyle instanceof Function) {
@@ -79,12 +86,12 @@ export function applyStyles(elementId: string) {
     }
   });
   const sheet = styleToStyleSheet(styles);
-  const styleElement = document.getElementById(elementId);
-  if (styleElement) {
-    if (styleElement.innerHTML !== sheet) {
-      styleElement.innerHTML = '';
-      styleElement.innerHTML = sheet;
-    }
+  const styleElement: any =
+    document.head.getElementsByTagName('style')[0] ||
+    document.head.appendChild(document.createElement('style'));
+  if (styleElement.innerHTML !== sheet) {
+    styleElement.innerHTML = '';
+    styleElement.innerHTML = sheet;
   }
 }
 
@@ -136,6 +143,7 @@ export function rerender(c: Component, body?: any): number {
     if (element) {
       changes++;
       element.outerHTML = c.html;
+      applyStyles();
       applyEvents(eventStartIndex);
     } else {
       let pos = components.indexOf(c);
