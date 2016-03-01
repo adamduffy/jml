@@ -3,7 +3,9 @@ import Component from '../ui/component';
 import {CssVar} from '../ui/cssvar';
 
 export interface Style {
-  $clickable;
+  $clickable?;
+  '#main'?;
+  '#main div'?;
 }
 
 export default class extends Component<any, Style> {
@@ -13,9 +15,16 @@ export default class extends Component<any, Style> {
       $clickable: {
         cursor: 'pointer',
         ':hover': {
-          'text-decoration': 'underline',
-          'background-color': CssVar.red
+          'text-decoration': 'underline'
         }
+      },
+      '#main': {
+        display: 'flex',
+        width: '100%',
+        padding: '17px'
+      },
+      '#main div': {
+        display: 'flex'
       }
     };
   }

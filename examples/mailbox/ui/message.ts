@@ -3,13 +3,22 @@ import {Message} from '../data';
 
 export interface Style {
   $messageClass?;
+  $messageHeader?;
 }
 
 export default class extends Component<Message, Style> {
 
   getDefaultStyle(): Style {
     return {
-      $messageClass: {color: 'green'}
+      $messageClass: {
+        color: 'green',
+        'flex-direction': 'column'
+      },
+      $messageHeader: {
+        tr: {
+          'text-align': 'left'
+        }
+      }
     };
   }
 
@@ -19,10 +28,10 @@ export default class extends Component<Message, Style> {
       return {};
     }
     return {div$messageClass: [
-      {dl: [
-        {dt: 'from'}, {dd: message.from},
-        {dt: 'to'}, {dd: message.to},
-        {dt: 'date'}, {dd: message.date.toLocaleDateString()}
+      {table$messageHeader: [
+        {tr: [{th: 'from'}, {td: message.from}]},
+        {tr: [{th: 'to'}, {td: message.to}]},
+        {tr: [{th: 'date'}, {td: message.date.toLocaleDateString()}]}
       ]},
       {h4: message.subject},
       {p: message.body}

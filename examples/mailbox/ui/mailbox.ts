@@ -8,18 +8,23 @@ export interface Style {
   $selected?;
   $mailboxClass?;
   tr?;
+  td?;
 }
 
 export default class extends Component<Mailbox, Style> {
 
   getDefaultStyle(): Style {
     return {
-      $selected: {color: 'green'},
-      $mailboxClass: {'background-color': 'lightblue'},
+      $selected: {'font-weight': 'bold'},
+      $mailboxClass: {
+        'background-color': 'lightgray',
+        ' td': {
+          padding: '5px'
+        }
+      },
       tr: {
-        'background-color': 'pink',
         '.clickable:hover': {
-          'color': 'white'
+          'color': 'darkblue'
         }
       }
     };
