@@ -116,12 +116,11 @@ function styleToStyleSheet(styles: any) {
     if (repeatWithState) {
       for (let sel in ids) {
         const values = ids[sel];
+        sel = sel.replace('$', '.');
         for (let styleAsState in values) {
           if (values[styleAsState] instanceof Object) {
             const states = values[styleAsState];
-            sel = sel.replace('$', '.');
-            sel = sel + styleAsState;
-            css += `#${id} ${sel} {\n`;
+            css += `#${id} ${sel}${styleAsState} {\n`;
             for (let stateKeys in states) {
               css += '\t' + stateKeys + ':' + states[stateKeys] + ';\n';
             }
