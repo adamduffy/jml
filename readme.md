@@ -1,6 +1,12 @@
 JML
 ===
 
+JML has been improved to the point it became NOML.
+
+https://github.com/adamduffy/noml
+
+...stop reading this and go there instead...
+
 JML renders javascript objects into html.  This technique allows for dynamic content to be rendered on the fly without ever touching html.
 
 ## Simple examples
